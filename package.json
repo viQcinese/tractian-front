@@ -20,7 +20,13 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "./**/*.{js,jsx,ts,tsx}": [
+      "eslint --no-ignore --max-warnings=0 --fix"
+    ]
   },
   "browserslist": {
     "production": [
@@ -41,6 +47,8 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.27.0",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.1.2",
     "prettier": "^2.4.1"
   }
 }
