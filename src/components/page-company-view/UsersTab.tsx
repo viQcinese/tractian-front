@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Table } from 'antd';
 import { Link } from 'react-router-dom';
-import useRemoteData from '../../hooks/useRemoteData';
+import useGetData from '../../hooks/useGetData';
 import { User } from '../../types/api';
 
 type UsersTabProps = {
@@ -10,9 +10,7 @@ type UsersTabProps = {
 
 export default function UsersTab(props: UsersTabProps) {
   const { companyId } = props;
-  const { data, loading } = useRemoteData<User[]>(
-    `companies/${companyId}/users`
-  );
+  const { data, loading } = useGetData<User[]>(`companies/${companyId}/users`);
 
   return (
     <Table

@@ -25,22 +25,31 @@ function App() {
         <Route exact path="/empresas" component={PageCompanyList} />
         <Route
           exact
-          path="/cadastrar-empresa"
+          path={['/cadastrar-empresa', '/empresas/:companyId/editar']}
           component={PageCompanyRegistration}
         />
         <Route
           exact
-          path="/cadastrar-unidade"
+          path={[
+            '/cadastrar-unidade',
+            '/empresas/:companyId/unidades/:unitId/editar',
+          ]}
           component={PageUnitRegistration}
         />
         <Route
           exact
-          path="/cadastrar-usuario"
+          path={[
+            '/cadastrar-usuario',
+            '/empresas/:companyId/usuarios/:userId/editar',
+          ]}
           component={PageUserRegistration}
         />
         <Route
           exact
-          path="/cadastrar-ativo"
+          path={[
+            '/cadastrar-ativo',
+            '/empresas/:companyId/ativos/:assetId/editar',
+          ]}
           component={PageAssetRegistration}
         />
         <Route
@@ -48,7 +57,7 @@ function App() {
           render={({ match }) => (
             <Switch>
               <Route exact path={match.path}>
-                <Redirect to={`${match.url}/ativos`} />
+                <Redirect to={`${match.url}/unidades`} />
               </Route>
               <Route
                 path={`${match.path}/:companyTab`}

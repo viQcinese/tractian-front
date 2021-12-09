@@ -2,33 +2,33 @@ import * as React from 'react';
 import axios, { AxiosResponse } from 'axios';
 import { API_URL } from '../utils/constants';
 
-type PostDataConfig<TData> = {
-  onCompleted?: (response: AxiosResponse<TData>) => void;
+type DeleteDataConfig = {
+  onCompleted?: (response: AxiosResponse) => void;
   onError?: (error: unknown) => void;
 };
 
-type PostData = {
+type DeleteData = {
   data?: unknown;
   loading?: boolean;
   error?: unknown;
 };
 
-type PostTupple<TData> = [(data: TData) => void, PostData];
+type PostTupple = [() => void, DeleteData];
 
-export default function usePostData<TData>(
+export default function useDeleteData(
   path: string,
-  config?: PostDataConfig<TData>
-): PostTupple<TData> {
+  config?: DeleteDataConfig
+): PostTupple {
   const [data, setData] = React.useState<AxiosResponse>();
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<unknown>();
 
-  async function postData(data: TData) {
+  async function deleteData() {
     setLoading(true);
     setError(undefined);
 
     try {
-      const response = await axios.post<TData>(`${API_URL}/${path}`, data);
+      const response = await axios.delete(`${API_URL}/${path}`, data);
       setData(response);
       if (config?.onCompleted) {
         config.onCompleted(response);
@@ -42,5 +42,5 @@ export default function usePostData<TData>(
     setLoading(false);
   }
 
-  return [postData, { data, loading, error }];
+  return [deleteData, { data, loading, error }];
 }

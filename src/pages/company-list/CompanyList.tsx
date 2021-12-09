@@ -1,16 +1,14 @@
 import * as React from 'react';
-import { Typography, Card, Button } from 'antd';
+import { Typography, Card, Button, Spin } from 'antd';
 import Layout from '../../components/layout/Layout';
-import './CompanyList.css';
 import { useHistory } from 'react-router';
-import useRemoteData from '../../hooks/useRemoteData';
+import useGetData from '../../hooks/useGetData';
 import { Company } from '../../types/api';
-import QueryResult from '../../components/query-result/QueryResult';
 
 const { Title } = Typography;
 
 export default function PageCompanyList() {
-  const { data } = useRemoteData<Company[]>('companies');
+  const { data, loading } = useGetData<Company[]>('companies');
   const history = useHistory();
 
   function onCompanyClick(id: number) {
@@ -20,8 +18,12 @@ export default function PageCompanyList() {
   return (
     <Layout>
       <Title>Empresas Cadastradas</Title>
-      <div className="company-grid">
-        <QueryResult.Resolved data={data}>
+      {loading ? (
+        <div className="spin-container">
+          <Spin size="large" />
+        </div>
+      ) : (
+        <div className="company-grid">
           {data?.map((company: Company) => (
             <CompanyCard
               key={company.id}
@@ -29,8 +31,8 @@ export default function PageCompanyList() {
               {...company}
             />
           ))}
-        </QueryResult.Resolved>
-      </div>
+        </div>
+      )}
     </Layout>
   );
 }

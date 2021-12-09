@@ -2,10 +2,9 @@ import * as React from 'react';
 import { Button, Result, Skeleton, Tabs, Typography } from 'antd';
 import Layout from '../../components/layout/Layout';
 import UnitsTab from '../../components/page-company-view/UnitsTab';
-import useRemoteData from '../../hooks/useRemoteData';
+import useGetData from '../../hooks/useGetData';
 import { useHistory, useParams } from 'react-router';
-import QueryResult from '../../components/query-result/QueryResult';
-import './CompanyView.css';
+import { Link } from 'react-router-dom';
 import { Company } from '../../types/api';
 import UsersTab from '../../components/page-company-view/UsersTab';
 import AssetsTab from '../../components/page-company-view/AssetsTab';
@@ -18,7 +17,7 @@ type PageCompanyRouteParams = {
 
 export default function PageCompanyView() {
   const { companyId, companyTab } = useParams<PageCompanyRouteParams>();
-  const { data, loading, error, refetch } = useRemoteData<Company>(
+  const { data, loading, error, refetch } = useGetData<Company>(
     `companies/${companyId}`
   );
   const history = useHistory();
@@ -33,14 +32,14 @@ export default function PageCompanyView() {
 
   return (
     <Layout>
-      <QueryResult.Resolved data={data}>
-        <Title>
-          {data?.name} #{data?.id}
-        </Title>
-      </QueryResult.Resolved>
-      <QueryResult.Pending loading={loading}>
-        <Skeleton paragraph={{ rows: 0 }} />
-      </QueryResult.Pending>
+      <Skeleton paragraph={false} loading={loading}>
+        <div className="title-container">
+          <Title>
+            {data?.name} #{data?.id}
+          </Title>
+          <Link to={`/empresas/${companyId}/editar`}>Editar Empresa</Link>
+        </div>
+      </Skeleton>
       {data || loading ? (
         <Tabs
           onChange={handleTabChange}

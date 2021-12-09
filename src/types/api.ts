@@ -7,6 +7,7 @@ export type Asset = {
   name: string;
   image: string;
   specifications: AssetSpecification;
+  metrics: AssetMetrics;
   unitId: number;
   companyId: number;
 };

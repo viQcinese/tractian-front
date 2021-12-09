@@ -3,7 +3,6 @@ import { Card, Layout as AntLayout, Menu, Dropdown } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import Logo from '../logo/Logo';
-import './Layout.css';
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -33,7 +32,7 @@ export default function Layout(props: LayoutProps) {
                   <Link to="/cadastrar-usuario">Cadastrar Usuário</Link>
                 </Menu.Item>
                 <Menu.Item key="asset-registration">
-                  <Link to="cadastrar-ativo">Cadastrar Ativo</Link>
+                  <Link to="/cadastrar-ativo">Cadastrar Ativo</Link>
                 </Menu.Item>
               </Menu>
             }

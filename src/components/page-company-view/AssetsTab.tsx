@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { Progress, Table } from 'antd';
 import { Link } from 'react-router-dom';
-import useRemoteData from '../../hooks/useRemoteData';
+import useGetData from '../../hooks/useGetData';
 import { Asset } from '../../types/api';
-import QueryResult from '../query-result/QueryResult';
 import { maskHours, maskPower, maskTemperature } from '../../utils/masks';
 
 type AssetsTabProps = {
@@ -12,22 +11,18 @@ type AssetsTabProps = {
 
 export default function AssetsTab(props: AssetsTabProps) {
   const { companyId } = props;
-  const { data, loading } = useRemoteData<Asset[]>(
+  const { data, loading } = useGetData<Asset[]>(
     `companies/${companyId}/assets`
   );
 
   return (
-    <React.Fragment>
-      <QueryResult.Resolved data={data}>
-        <Table
-          columns={columns}
-          dataSource={data}
-          loading={loading}
-          rowKey="id"
-          pagination={false}
-        />
-      </QueryResult.Resolved>
-    </React.Fragment>
+    <Table
+      columns={columns}
+      dataSource={data}
+      loading={loading}
+      rowKey="id"
+      pagination={false}
+    />
   );
 }
 
