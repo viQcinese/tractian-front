@@ -8,6 +8,10 @@ import {
 import PageCompanyList from './pages/company-list/CompanyList';
 import PageCompanyView from './pages/company-view/CompanyView';
 import PageNotFound from './pages/not-found/NotFound';
+import PageCompanyRegistration from './pages/company-registration/CompanyRegistration';
+import PageUnitRegistration from './pages/unit-registration/UnitRegistration';
+import PageUserRegistration from './pages/user-registration/UserRegistration';
+import PageAssetRegistration from './pages/asset-registration/AssetRegistration';
 import 'antd/dist/antd.css';
 import './styles.css';
 
@@ -19,6 +23,26 @@ function App() {
           <Redirect to="/empresas" />
         </Route>
         <Route exact path="/empresas" component={PageCompanyList} />
+        <Route
+          exact
+          path="/cadastrar-empresa"
+          component={PageCompanyRegistration}
+        />
+        <Route
+          exact
+          path="/cadastrar-unidade"
+          component={PageUnitRegistration}
+        />
+        <Route
+          exact
+          path="/cadastrar-usuario"
+          component={PageUserRegistration}
+        />
+        <Route
+          exact
+          path="/cadastrar-ativo"
+          component={PageAssetRegistration}
+        />
         <Route
           path="/empresas/:companyId"
           render={({ match }) => (

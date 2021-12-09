@@ -1,0 +1,9 @@
+.dynamic-input {
+  display: flex !important;
+  align-items: center !important;
+  background: 'red';
+}
+
+.dynamic-input input {
+  margin-right: 10px;
+}

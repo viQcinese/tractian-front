@@ -5,8 +5,7 @@ import { API_URL } from '../utils/constants';
 export default function useRemoteData<TData>(path: string) {
   const [data, setData] = React.useState<TData>();
   const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [error, setError] = React.useState<Error>();
   const [refetchCounter, setRefetchCounter] = React.useState(0);
 
   function refetch() {
@@ -18,13 +17,12 @@ export default function useRemoteData<TData>(path: string) {
     axios
       .get(`${API_URL}/${path}`)
       .then((response) => {
-        setLoading(false);
         setData(response.data);
       })
       .catch((error) => {
-        setLoading(false);
         setError(error);
       });
+    setLoading(false);
 
     return function cleanup() {
       setData(undefined);
