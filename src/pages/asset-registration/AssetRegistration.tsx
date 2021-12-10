@@ -81,7 +81,7 @@ export default function PageAssetRegistration(
     usePostData<AssetRegistrationNormalizedData>('assets', {
       onCompleted: ({ status, data }) => {
         if (status === 201) {
-          history.push(`empresas/${data.companyId}/ativos`);
+          history.push(`/empresas/${data.companyId}/ativos`);
           message.success('Novo ativo cadastrado com sucesso!');
         }
       },
@@ -91,7 +91,7 @@ export default function PageAssetRegistration(
     usePutData<AssetRegistrationNormalizedData>(`assets/${assetId}`, {
       onCompleted: ({ status, data }) => {
         if (status === 200) {
-          history.push(`empresas/${data.companyId}/ativos`);
+          history.push(`/empresas/${data.companyId}/ativos`);
           message.success('Ativo editado com sucesso!');
         }
       },
@@ -100,9 +100,9 @@ export default function PageAssetRegistration(
   const [deleteAsset, { loading: deleteLoading }] = useDeleteData(
     `assets/${assetId}`,
     {
-      onCompleted: ({ status, data }) => {
+      onCompleted: ({ status }) => {
         if (status === 200) {
-          history.push(`empresas/${data.companyId}/ativos`);
+          history.push(`/empresas/${companyId}/ativos`);
           message.info('Ativo deletado com sucesso!');
         }
       },

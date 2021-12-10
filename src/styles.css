@@ -13,7 +13,7 @@ body {
 }
 
 p, span, a, button {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   line-height: normal;
 }
 
@@ -78,7 +78,7 @@ p, span, a, button {
 }
 
 .title-container a {
-  font-size: 2.4rem;
+  font-size: 2rem;
 }
 
 .title-container button {
@@ -92,4 +92,14 @@ p, span, a, button {
 
 .dynamic-input input {
   margin-right: 10px;
+}
+
+.company-cover-grid {
+  display: grid;
+  grid-template-columns: 1;
+  row-gap: 4rem;
+}
+
+.asset-description-container {
+  margin-top: 2rem;
 }

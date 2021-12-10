@@ -56,7 +56,7 @@ export default function PageUnitRegistration(props: PageUnitRegistrationProps) {
     usePostData<UnitRegistrationData>('units', {
       onCompleted: ({ status, data }) => {
         if (status === 201) {
-          history.push(`empresas/${data.companyId}/unidades`);
+          history.push(`/empresas/${data.companyId}/unidades`);
           message.success('Nova unidade cadastrada com sucesso!');
         }
       },
@@ -66,7 +66,7 @@ export default function PageUnitRegistration(props: PageUnitRegistrationProps) {
     usePutData<UnitRegistrationData>(`units/${unitId}`, {
       onCompleted: ({ status, data }) => {
         if (status === 200) {
-          history.push(`empresas/${data.companyId}/unidades`);
+          history.push(`/empresas/${data.companyId}/unidades`);
           message.success('Unidade alterada com sucesso!');
         }
       },
@@ -75,10 +75,10 @@ export default function PageUnitRegistration(props: PageUnitRegistrationProps) {
   const [deleteUnit, { loading: deleteLoading }] = useDeleteData(
     `units/${unitId}`,
     {
-      onCompleted: ({ status, data }) => {
+      onCompleted: ({ status }) => {
         if (status === 200) {
           onClose();
-          history.push(`empresas/${data.companyId}/unidades`);
+          history.push(`/empresas/${companyId}/unidades`);
           message.info('Unidade deletada com sucesso!');
         }
       },

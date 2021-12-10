@@ -57,7 +57,7 @@ export default function PageUserRegistration(props: PageUserRegistrationProps) {
     usePostData<UserRegistrationData>('users', {
       onCompleted: ({ status, data }) => {
         if (status === 201) {
-          history.push(`empresas/${data.companyId}/usuarios`);
+          history.push(`/empresas/${data.companyId}/usuarios`);
           message.success('Novo usuário cadastrado com sucesso!');
         }
       },
@@ -67,7 +67,7 @@ export default function PageUserRegistration(props: PageUserRegistrationProps) {
     usePutData<UserRegistrationData>(`users/${userId}`, {
       onCompleted: ({ status, data }) => {
         if (status === 200) {
-          history.push(`empresas/${data.companyId}/usuarios`);
+          history.push(`/empresas/${data.companyId}/usuarios`);
           message.success('Usuário editado com sucesso!');
         }
       },
@@ -76,9 +76,9 @@ export default function PageUserRegistration(props: PageUserRegistrationProps) {
   const [deleteUser, { loading: deleteLoading }] = useDeleteData(
     `users/${userId}`,
     {
-      onCompleted: ({ status, data }) => {
+      onCompleted: ({ status }) => {
         if (status === 200) {
-          history.push(`empresas/${data.companyId}/usuarios`);
+          history.push(`/empresas/${companyId}/usuarios`);
           message.info('Usuário deletado com sucesso!');
         }
       },

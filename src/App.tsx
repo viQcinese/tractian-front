@@ -12,6 +12,7 @@ import PageCompanyRegistration from './pages/company-registration/CompanyRegistr
 import PageUnitRegistration from './pages/unit-registration/UnitRegistration';
 import PageUserRegistration from './pages/user-registration/UserRegistration';
 import PageAssetRegistration from './pages/asset-registration/AssetRegistration';
+import PageAssetView from './pages/asset-view/AssetView';
 import 'antd/dist/antd.css';
 import './styles.css';
 
@@ -57,8 +58,13 @@ function App() {
           render={({ match }) => (
             <Switch>
               <Route exact path={match.path}>
-                <Redirect to={`${match.url}/unidades`} />
+                <Redirect to={`${match.url}/cover`} />
               </Route>
+              <Route
+                exact
+                path={`${match.path}/ativos/:assetId`}
+                component={PageAssetView}
+              />
               <Route
                 path={`${match.path}/:companyTab`}
                 component={PageCompanyView}

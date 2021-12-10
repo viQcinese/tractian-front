@@ -31,7 +31,7 @@ const columns = [
     title: 'Nome',
     dataIndex: 'name',
     render: (text: string, asset: Asset) => (
-      <Link to={`/empresas/${asset.companyId}/ativos/${asset.id}/editar`}>
+      <Link to={`/empresas/${asset.companyId}/ativos/${asset.id}`}>
         {text || '- -'}
       </Link>
     ),
@@ -75,7 +75,7 @@ const columns = [
   {
     title: 'Desempenho',
     dataIndex: 'healthscore',
-    render: (text: string, asset: Asset) => (
+    render: (__: string, asset: Asset) => (
       <Progress
         type="circle"
         width={50}

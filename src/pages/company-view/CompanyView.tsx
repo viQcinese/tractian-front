@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { Company } from '../../types/api';
 import UsersTab from '../../components/page-company-view/UsersTab';
 import AssetsTab from '../../components/page-company-view/AssetsTab';
+import CoverTab from '../../components/page-company-view/CoverTab';
 const { Title } = Typography;
 
 type PageCompanyRouteParams = {
@@ -46,6 +47,9 @@ export default function PageCompanyView() {
           defaultActiveKey="assets"
           activeKey={activeTab}
         >
+          <Tabs.TabPane tab="Cover" key="cover">
+            <CoverTab companyId={companyId} />
+          </Tabs.TabPane>
           <Tabs.TabPane tab="Unidades" key="units">
             <UnitsTab companyId={companyId} />
           </Tabs.TabPane>
@@ -73,6 +77,7 @@ export default function PageCompanyView() {
 }
 
 const tabs = [
+  { key: 'cover', name: 'cover' },
   { key: 'units', name: 'unidades' },
   { key: 'users', name: 'usuarios' },
   { key: 'assets', name: 'ativos' },
