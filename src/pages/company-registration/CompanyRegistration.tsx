@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { RouteComponentProps, useHistory, Link } from 'react-router-dom';
 import {
   Button,
   Form,
@@ -9,6 +9,7 @@ import {
   FormInstance,
   Skeleton,
   Modal,
+  Breadcrumb,
 } from 'antd';
 import Layout from '../../components/layout/Layout';
 import Error from '../../components/error/Error';
@@ -88,13 +89,9 @@ export default function PageCompanyRegistration(
 
   React.useEffect(() => {
     if (data?.name) {
-      console.log('here');
       form.setFields([{ name: 'name', value: data?.name }]);
     }
   }, [data]);
-
-  console.log(data);
-  console.log(form.getFieldsValue());
 
   function submitForm(data: CompanyRegistrationData) {
     if (isEditPage) {
@@ -119,6 +116,14 @@ export default function PageCompanyRegistration(
         irreversível e os dados apagados não poderão mais ser recuperados.
         Deseja continuar?
       </Modal>
+      <Breadcrumb separator=">" className="breadcrumb">
+        <Breadcrumb.Item href="/empresas">
+          <Link to="/empresas">Empresas</Link>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>
+          {isEditPage ? 'Editar Empresa' : 'Cadastrar Empresa'}
+        </Breadcrumb.Item>
+      </Breadcrumb>
       <Typography.Title>
         {isEditPage ? 'Editar Empresa' : 'Cadastrar Empresa'}
       </Typography.Title>

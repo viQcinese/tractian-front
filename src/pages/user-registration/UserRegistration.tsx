@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import {
   Button,
   Form,
@@ -11,6 +11,7 @@ import {
   FormInstance,
   Skeleton,
   Modal,
+  Breadcrumb,
 } from 'antd';
 import Layout from '../../components/layout/Layout';
 import Error from '../../components/error/Error';
@@ -126,6 +127,14 @@ export default function PageUserRegistration(props: PageUserRegistrationProps) {
         irreversível e os dados apagados não poderão mais ser recuperados.
         Deseja continuar?
       </Modal>
+      <Breadcrumb separator=">" className="breadcrumb">
+        <Breadcrumb.Item href="/empresas">
+          <Link to="/empresas">Empresas</Link>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>
+          {isEditPage ? 'Editar Usuário' : 'Cadastrar Usuário'}
+        </Breadcrumb.Item>
+      </Breadcrumb>
       <Typography.Title>
         {isEditPage ? 'Editar Usuário' : 'Cadastrar Usuário'}
       </Typography.Title>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useHistory, useParams, Link } from 'react-router-dom';
-import { Skeleton, Spin, Tabs, Typography } from 'antd';
+import { Breadcrumb, Skeleton, Spin, Tabs, Typography } from 'antd';
 import Layout from '../../components/layout/Layout';
 import Error from '../../components/error/Error';
 import UnitsTab from '../../components/page-company-view/UnitsTab';
@@ -33,10 +33,16 @@ export default function PageCompanyView() {
   return (
     <Layout>
       <Skeleton paragraph={false} loading={loading}>
+        <Breadcrumb separator=">" className="breadcrumb">
+          <Breadcrumb.Item>
+            <Link to="/empresas">Empresas</Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>{data?.name}</Breadcrumb.Item>
+        </Breadcrumb>
+      </Skeleton>
+      <Skeleton paragraph={false} loading={loading}>
         <div className="title-container">
-          <Typography.Title>
-            {data?.name} #{data?.id}
-          </Typography.Title>
+          <Typography.Title>{data?.name}</Typography.Title>
           <Link to={`/empresas/${companyId}/editar`}>Editar Empresa</Link>
         </div>
       </Skeleton>

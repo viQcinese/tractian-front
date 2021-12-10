@@ -15,6 +15,7 @@ import {
   FormInstance,
   Skeleton,
   Modal,
+  Breadcrumb,
 } from 'antd';
 import {
   MinusCircleOutlined,
@@ -24,7 +25,7 @@ import {
 import Layout from '../../components/layout/Layout';
 import { Asset, Company, Unit } from '../../types/api';
 import { UploadFile } from 'antd/lib/upload/interface';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { Link, RouteComponentProps, useHistory } from 'react-router-dom';
 import useGetData from '../../hooks/useGetData';
 import usePostData from '../../hooks/usePostData';
 import useDisclosure from '../../hooks/useDisclosure';
@@ -167,6 +168,14 @@ export default function PageAssetRegistration(
         Atenção, você irá deletar um ativo do sistema. Esta ação é irreversível
         e os dados apagados não poderão mais ser recuperados. Deseja continuar?
       </Modal>
+      <Breadcrumb separator=">" className="breadcrumb">
+        <Breadcrumb.Item href="/empresas">
+          <Link to="/empresas">Empresas</Link>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>
+          {isEditPage ? 'Editar Ativo' : 'Cadastrar Ativo'}
+        </Breadcrumb.Item>
+      </Breadcrumb>
       <Typography.Title>
         {isEditPage ? 'Editar Ativo' : 'Cadastrar Ativo'}
       </Typography.Title>

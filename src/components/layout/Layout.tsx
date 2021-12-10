@@ -21,7 +21,7 @@ export default function Layout(props: LayoutProps) {
           <Dropdown
             trigger={['click']}
             overlay={
-              <Menu title="menu">
+              <Menu title="menu" className="layout-menu-container">
                 <Menu.Item key="company-registration">
                   <Link to="/cadastrar-empresa">Cadastrar Empresa</Link>
                 </Menu.Item>

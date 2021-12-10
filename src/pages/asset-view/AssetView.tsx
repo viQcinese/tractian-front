@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import Layout from '../../components/layout/Layout';
 import {
+  Breadcrumb,
   Descriptions,
   Image,
   Progress,
@@ -11,7 +13,6 @@ import {
 } from 'antd';
 import Error from '../../components/error/Error';
 import { Asset, Company } from '../../types/api';
-import { Link, RouteComponentProps } from 'react-router-dom';
 import useGetData from '../../hooks/useGetData';
 import { maskHours, maskPower, maskTemperature } from '../../utils/masks';
 
@@ -32,11 +33,24 @@ export default function PageAssetView(props: PageAssetViewProps) {
   const { data, loading, error, refetch } = useGetData<Asset>(
     `assets/${assetId}`
   );
-  const { data: company } = useGetData<Company>(`companies/${data?.companyId}`);
+  const { data: company, loading: companyLoading } = useGetData<Company>(
+    `companies/${data?.companyId}`
+  );
   const { data: unit } = useGetData<Company>(`units/${data?.unitId}`);
 
   return (
     <Layout>
+      <Skeleton paragraph={false} loading={loading || companyLoading}>
+        <Breadcrumb separator=">" className="breadcrumb">
+          <Breadcrumb.Item href="/empresas">
+            <Link to="/empresas">Empresas</Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>
+            <Link to={`/empresas/${company?.id}`}>{company?.name}</Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>{data?.name}</Breadcrumb.Item>
+        </Breadcrumb>
+      </Skeleton>
       <Skeleton paragraph={false} loading={loading}>
         <div className="title-container">
           <Typography.Title>{data?.name}</Typography.Title>
