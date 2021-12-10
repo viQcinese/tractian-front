@@ -14,6 +14,10 @@ export default function PageCompanyList() {
     history.push(`/empresas/${id}`);
   }
 
+  React.useEffect(() => {
+    document.title = `Empresas Cadastradas — Tractian`;
+  }, []);
+
   return (
     <Layout>
       <Typography.Title>Empresas Cadastradas</Typography.Title>

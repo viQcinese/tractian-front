@@ -5,9 +5,15 @@ import { useHistory } from 'react-router';
 
 export default function PageNotFound() {
   const history = useHistory();
+
   function redirectToHome() {
     history.push('/');
   }
+
+  React.useEffect(() => {
+    document.title = `Página não encontrada — Tractian`;
+  }, []);
+
   return (
     <Layout>
       <Result

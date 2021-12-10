@@ -38,6 +38,12 @@ export default function PageAssetView(props: PageAssetViewProps) {
   );
   const { data: unit } = useGetData<Company>(`units/${data?.unitId}`);
 
+  React.useEffect(() => {
+    if (data?.name) {
+      document.title = `${data?.name} — Tractian`;
+    }
+  }, [data]);
+
   return (
     <Layout>
       <Skeleton paragraph={false} loading={loading || companyLoading}>

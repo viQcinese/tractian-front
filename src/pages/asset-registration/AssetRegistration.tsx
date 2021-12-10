@@ -154,6 +154,12 @@ export default function PageAssetRegistration(
     }
   }
 
+  React.useEffect(() => {
+    document.title = isEditPage
+      ? 'Editar Ativo — Tractian'
+      : 'Cadastrar Ativo — Tractian';
+  }, []);
+
   return (
     <Layout isForm>
       <Modal

@@ -101,6 +101,12 @@ export default function PageCompanyRegistration(
     }
   }
 
+  React.useEffect(() => {
+    document.title = isEditPage
+      ? 'Editar Empresa — Tractian'
+      : 'Cadastrar Empresa — Tractian';
+  }, []);
+
   return (
     <Layout isForm>
       <Modal

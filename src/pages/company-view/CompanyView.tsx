@@ -30,6 +30,12 @@ export default function PageCompanyView() {
   const activeTab =
     tabs.find((tab) => tab.name === companyTab)?.key || 'assets';
 
+  React.useEffect(() => {
+    if (data?.name) {
+      document.title = `${data?.name} — Tractian`;
+    }
+  }, [data]);
+
   return (
     <Layout>
       <Skeleton paragraph={false} loading={loading}>

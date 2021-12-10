@@ -112,6 +112,12 @@ export default function PageUserRegistration(props: PageUserRegistrationProps) {
     }
   }
 
+  React.useEffect(() => {
+    document.title = isEditPage
+      ? 'Editar Usuário — Tractian'
+      : 'Cadastrar Usuário — Tractian';
+  }, []);
+
   return (
     <Layout isForm>
       <Modal

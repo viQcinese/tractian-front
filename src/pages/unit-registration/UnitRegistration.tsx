@@ -106,6 +106,12 @@ export default function PageUnitRegistration(props: PageUnitRegistrationProps) {
     }
   }
 
+  React.useEffect(() => {
+    document.title = isEditPage
+      ? 'Editar Unidade — Tractian'
+      : 'Cadastrar Unidade — Tractian';
+  }, []);
+
   return (
     <Layout isForm>
       <Modal
