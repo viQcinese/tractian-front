@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Progress, Table } from 'antd';
+import { Progress, Table, Tag } from 'antd';
 import { Link } from 'react-router-dom';
 import useGetData from '../../hooks/useGetData';
 import { Asset } from '../../types/api';
@@ -14,7 +14,6 @@ export default function AssetsTab(props: AssetsTabProps) {
   const { data, loading } = useGetData<Asset[]>(
     `companies/${companyId}/assets`
   );
-
   return (
     <Table
       columns={columns}
@@ -35,11 +34,6 @@ const columns = [
         {text || '- -'}
       </Link>
     ),
-  },
-  {
-    title: 'Modelo',
-    dataIndex: 'model',
-    render: (value: string) => value ?? '- -',
   },
   {
     title: 'Temp. Máxima',
@@ -73,7 +67,13 @@ const columns = [
       value ? new Date(value).toLocaleString() : '- -',
   },
   {
-    title: 'Desempenho',
+    title: 'Status',
+    dataIndex: 'status',
+    render: (value: 'inAlert' | 'inOperation' | 'inDowntime') =>
+      value ? statusTags[value] : '- -',
+  },
+  {
+    title: 'Saúde',
     dataIndex: 'healthscore',
     render: (__: string, asset: Asset) => (
       <Progress
@@ -91,13 +91,14 @@ const columns = [
     ),
   },
   {
-    title: 'Unidade',
-    dataIndex: 'unitId',
-    render: (value: string) => value || '- -',
-  },
-  {
     title: 'Id',
     dataIndex: 'id',
     render: (value: string) => value || '- -',
   },
 ];
+
+const statusTags = {
+  inAlert: <Tag color="red">Em Alerta</Tag>,
+  inDowntime: <Tag color="yellow">Em Descanso</Tag>,
+  inOperation: <Tag color="green">Em Operação</Tag>,
+};

@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { Typography, Card, Button, Spin } from 'antd';
 import Layout from '../../components/layout/Layout';
+import Error from '../../components/error/Error';
+import { Company } from '../../types/api';
 import { useHistory } from 'react-router';
 import useGetData from '../../hooks/useGetData';
-import { Company } from '../../types/api';
-
-const { Title } = Typography;
 
 export default function PageCompanyList() {
-  const { data, loading } = useGetData<Company[]>('companies');
+  const { data, loading, error, refetch } = useGetData<Company[]>('companies');
   const history = useHistory();
 
   function onCompanyClick(id: number) {
@@ -17,12 +16,14 @@ export default function PageCompanyList() {
 
   return (
     <Layout>
-      <Title>Empresas Cadastradas</Title>
+      <Typography.Title>Empresas Cadastradas</Typography.Title>
       {loading ? (
         <div className="spin-container">
           <Spin size="large" />
         </div>
-      ) : (
+      ) : error ? (
+        <Error refetch={refetch} />
+      ) : data ? (
         <div className="company-grid">
           {data?.map((company: Company) => (
             <CompanyCard
@@ -32,7 +33,7 @@ export default function PageCompanyList() {
             />
           ))}
         </div>
-      )}
+      ) : null}
     </Layout>
   );
 }
@@ -47,15 +48,7 @@ function CompanyCard(props: CompanyCardProps) {
   const { name, id, onClick } = props;
 
   return (
-    <Card
-      title={name}
-      hoverable
-      // actions={[
-      //   <Button key={1} type="text" block onClick={() => onClick(id)}>
-      //     Ver Detalhes
-      //   </Button>,
-      // ]}
-    >
+    <Card title={name} hoverable>
       <Button key={1} type="text" block onClick={() => onClick(id)}>
         Ver Detalhes
       </Button>

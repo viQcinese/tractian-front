@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 import {
   Button,
   Form,
@@ -10,15 +11,13 @@ import {
   Modal,
 } from 'antd';
 import Layout from '../../components/layout/Layout';
-import usePostData from '../../hooks/usePostData';
+import Error from '../../components/error/Error';
 import { Company } from '../../types/api';
-import { RouteComponentProps, useHistory } from 'react-router';
+import usePostData from '../../hooks/usePostData';
 import useGetData from '../../hooks/useGetData';
 import useDisclosure from '../../hooks/useDisclosure';
 import useDeleteData from '../../hooks/useDeleteData';
 import usePutData from '../../hooks/usePutData';
-
-const { Title, Paragraph } = Typography;
 
 type CompanyRegistrationRouteParams = {
   companyId?: string;
@@ -45,10 +44,12 @@ export default function PageCompanyRegistration(
     formRef.current as FormInstance<CompanyRegistrationData>
   );
 
-  const { loading: fetchLoading, data } = useGetData<Company>(
-    `companies/${companyId}`,
-    { shouldGet: isEditPage }
-  );
+  const {
+    loading: fetchLoading,
+    data,
+    error,
+    refetch,
+  } = useGetData<Company>(`companies/${companyId}`, { shouldGet: isEditPage });
 
   const [registerCompany, { loading: registrationLoading }] =
     usePostData<CompanyRegistrationData>('companies', {
@@ -86,8 +87,14 @@ export default function PageCompanyRegistration(
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   React.useEffect(() => {
-    form.setFields([{ name: 'name', value: data?.name }]);
+    if (data?.name) {
+      console.log('here');
+      form.setFields([{ name: 'name', value: data?.name }]);
+    }
   }, [data]);
+
+  console.log(data);
+  console.log(form.getFieldsValue());
 
   function submitForm(data: CompanyRegistrationData) {
     if (isEditPage) {
@@ -112,60 +119,67 @@ export default function PageCompanyRegistration(
         irreversível e os dados apagados não poderão mais ser recuperados.
         Deseja continuar?
       </Modal>
-      <div className="title-container">
-        <Title>{isEditPage ? 'Editar Empresa' : 'Cadastrar Empresa'}</Title>
-      </div>
-      <Paragraph type="secondary" style={{ fontSize: '16px' }}>
+      <Typography.Title>
+        {isEditPage ? 'Editar Empresa' : 'Cadastrar Empresa'}
+      </Typography.Title>
+      <Typography.Paragraph type="secondary" style={{ fontSize: '16px' }}>
         {isEditPage
           ? 'Para editar uma empresa já acadastrada, altere os dados abaixo conforme as suas necessidades'
           : 'Para cadastrar uma nova empresa, preencha os dados abaixo'}
-      </Paragraph>
-      <Form
-        ref={formRef}
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
-        style={{ width: '100%', marginTop: '4rem' }}
-        onFinish={submitForm}
-      >
-        <Skeleton paragraph={{ rows: 0, width: '100%' }} loading={fetchLoading}>
-          <Form.Item
-            label="Nome"
-            name="name"
-            rules={[
-              { required: true, message: 'O nome da empresa é obrigatório' },
-            ]}
+      </Typography.Paragraph>
+      {error ? (
+        <Error refetch={refetch} />
+      ) : (
+        <Form
+          ref={formRef}
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+          style={{ width: '100%', marginTop: '4rem' }}
+          onFinish={submitForm}
+        >
+          <Skeleton
+            paragraph={{ rows: 0, width: '100%' }}
+            loading={fetchLoading}
           >
-            <Input />
-          </Form.Item>
-        </Skeleton>
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={registrationLoading || updateLoading}
-            disabled={fetchLoading}
-          >
-            {isEditPage ? 'Editar Empresa' : 'Cadastrar Empresa'}
-          </Button>
-        </Form.Item>
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button type="ghost" onClick={() => history.goBack()}>
-            Voltar
-          </Button>
-        </Form.Item>
-        {isEditPage ? (
-          <Form.Item wrapperCol={{ offset: 20, span: 4 }}>
-            <Button
-              danger
-              onClick={onOpen}
-              style={{ marginLeft: 'auto' }}
-              block
+            <Form.Item
+              label="Nome"
+              name="name"
+              rules={[
+                { required: true, message: 'O nome da empresa é obrigatório' },
+              ]}
             >
-              Deletar
+              <Input />
+            </Form.Item>
+          </Skeleton>
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={registrationLoading || updateLoading}
+              disabled={fetchLoading}
+            >
+              {isEditPage ? 'Editar Empresa' : 'Cadastrar Empresa'}
             </Button>
           </Form.Item>
-        ) : null}
-      </Form>
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Button type="ghost" onClick={() => history.goBack()}>
+              Voltar
+            </Button>
+          </Form.Item>
+          {isEditPage ? (
+            <Form.Item wrapperCol={{ offset: 20, span: 4 }}>
+              <Button
+                danger
+                onClick={onOpen}
+                style={{ marginLeft: 'auto' }}
+                block
+              >
+                Deletar
+              </Button>
+            </Form.Item>
+          ) : null}
+        </Form>
+      )}
     </Layout>
   );
 }

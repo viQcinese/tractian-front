@@ -1,4 +1,5 @@
 import * as React from 'react';
+import moment from 'moment';
 import {
   Button,
   Form,
@@ -15,24 +16,22 @@ import {
   Skeleton,
   Modal,
 } from 'antd';
-import Layout from '../../components/layout/Layout';
-import usePostData from '../../hooks/usePostData';
-import { Asset, Company, Unit } from '../../types/api';
-import { useHistory } from 'react-router';
-import useGetData from '../../hooks/useGetData';
 import {
   MinusCircleOutlined,
   PlusOutlined,
   UploadOutlined,
 } from '@ant-design/icons';
-import moment from 'moment';
-import { API_URL } from '../../utils/constants';
+import Layout from '../../components/layout/Layout';
+import { Asset, Company, Unit } from '../../types/api';
 import { UploadFile } from 'antd/lib/upload/interface';
-const { Title, Paragraph } = Typography;
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
+import useGetData from '../../hooks/useGetData';
+import usePostData from '../../hooks/usePostData';
 import useDisclosure from '../../hooks/useDisclosure';
 import usePutData from '../../hooks/usePutData';
 import useDeleteData from '../../hooks/useDeleteData';
+import { API_URL } from '../../utils/constants';
+import Error from '../../components/error/Error';
 
 type AssetRegistrationRouteParams = {
   companyId?: string;
@@ -71,10 +70,12 @@ export default function PageAssetRegistration(
     formRef.current as FormInstance<AssetRegistrationData>
   );
 
-  const { loading: assetLoading, data: assetData } = useGetData<Asset>(
-    `assets/${assetId}`,
-    { shouldGet: isEditPage }
-  );
+  const {
+    loading: assetLoading,
+    data: assetData,
+    error,
+    refetch,
+  } = useGetData<Asset>(`assets/${assetId}`, { shouldGet: isEditPage });
 
   const [selectedCompany, setSelectedCompany] = React.useState<number>();
   const [registerAsset, { loading: registrationLoading }] =
@@ -166,199 +167,247 @@ export default function PageAssetRegistration(
         Atenção, você irá deletar um ativo do sistema. Esta ação é irreversível
         e os dados apagados não poderão mais ser recuperados. Deseja continuar?
       </Modal>
-      <Title>{isEditPage ? 'Editar Ativo' : 'Cadastrar Ativo'}</Title>
-      <Paragraph type="secondary" style={{ fontSize: '16px' }}>
+      <Typography.Title>
+        {isEditPage ? 'Editar Ativo' : 'Cadastrar Ativo'}
+      </Typography.Title>
+      <Typography.Paragraph type="secondary" style={{ fontSize: '16px' }}>
         {isEditPage
           ? 'Para editar um ativo já cadastrado, altere os dados abaixo conforme as suas necessidades'
           : 'Para cadastrar um novo ativo, preencha os dados abaixo'}
-      </Paragraph>
-      <Form
-        ref={formRef}
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
-        style={{ width: '100%', marginTop: '4rem' }}
-        onFinish={submitForm}
-      >
-        <Skeleton paragraph={{ rows: 0, width: '100%' }} loading={assetLoading}>
-          <Form.Item
-            label="Nome"
-            name="name"
-            rules={[
-              { required: true, message: 'O nome do ativo é obrigatório' },
-            ]}
+      </Typography.Paragraph>
+      {error ? (
+        <Error refetch={refetch} />
+      ) : (
+        <Form
+          ref={formRef}
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+          style={{ width: '100%', marginTop: '4rem' }}
+          onFinish={submitForm}
+        >
+          <Skeleton
+            paragraph={{ rows: 0, width: '100%' }}
+            loading={assetLoading}
           >
-            <Input />
-          </Form.Item>
-        </Skeleton>
-        <Skeleton paragraph={{ rows: 0, width: '100%' }} loading={assetLoading}>
-          <Form.Item
-            label="Empresa"
-            name="companyId"
-            rules={[{ required: true, message: 'A empresa é obrigatória' }]}
-          >
-            <Select
-              loading={companiesLoading}
-              notFoundContent={<Empty />}
-              onChange={(value) => setSelectedCompany(value as number)}
+            <Form.Item
+              label="Nome"
+              name="name"
+              rules={[
+                { required: true, message: 'O nome do ativo é obrigatório' },
+              ]}
             >
-              {companiesData?.map((company) => (
-                <Select.Option key={company.id} value={company.id}>
-                  {company.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </Skeleton>
-        <Skeleton paragraph={{ rows: 0, width: '100%' }} loading={assetLoading}>
-          <Form.Item
-            label="Unidade"
-            name="unitId"
-            rules={[{ required: true, message: 'A unidade é obrigatória' }]}
-          >
-            <Select loading={unitsLoading} notFoundContent={<Empty />}>
-              {unitsData?.map((unit) => (
-                <Select.Option key={unit.id} value={unit.id}>
-                  {unit.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </Skeleton>
-        <Skeleton paragraph={{ rows: 0, width: '100%' }} loading={assetLoading}>
-          <Form.Item label="Modelo" name="model">
-            <Input />
-          </Form.Item>
-        </Skeleton>
-        <Skeleton paragraph={{ rows: 0, width: '100%' }} loading={assetLoading}>
-          <Form.Item label="Status" name="status">
-            <Select
-              notFoundContent={<Empty />}
-              onChange={(value) => setSelectedCompany(value as number)}
-            >
-              {statusArray.map((status) => (
-                <Select.Option key={status.key} value={status.key}>
-                  {status.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </Skeleton>
-        <Skeleton paragraph={{ rows: 0, width: '100%' }} loading={assetLoading}>
-          <Form.Item label="Saúde (%)" name="healthscore">
-            <InputNumber max={100} min={0} />
-          </Form.Item>
-        </Skeleton>
-        <Skeleton paragraph={{ rows: 0, width: '100%' }} loading={assetLoading}>
-          <Form.Item label="Imagem">
-            <Form.Item name="image" valuePropName="image" noStyle>
-              <Upload
-                name="image"
-                action={API_URL}
-                beforeUpload={() => false}
-                accept=".jpg,.jpeg,.png"
-              >
-                <Button icon={<UploadOutlined />}>Fazer Upload</Button>
-              </Upload>
+              <Input />
             </Form.Item>
-          </Form.Item>
-        </Skeleton>
-        <Divider />
-        <Form.List name="sensors" initialValue={['']}>
-          {(fields, { add, remove }) => (
-            <React.Fragment>
-              {fields.map((field, index) => (
-                <Form.Item
-                  {...field}
-                  labelCol={{ span: 8 }}
-                  wrapperCol={{ span: 12, offset: index === 0 ? 0 : 8 }}
-                  label={index === 0 ? 'Sensores' : ''}
-                  key={field.key}
-                >
-                  <Form.Item {...field} noStyle>
-                    <div className="dynamic-input">
-                      <Input />
-                      {fields.length > 1 ? (
-                        <MinusCircleOutlined
-                          className="dynamic-delete-button"
-                          onClick={() => remove(field.name)}
-                        />
-                      ) : null}
-                    </div>
-                  </Form.Item>
-                </Form.Item>
-              ))}
-              <Form.Item wrapperCol={{ offset: 8 }}>
-                <Button
-                  type="dashed"
-                  onClick={() => add()}
-                  icon={<PlusOutlined />}
-                >
-                  Add field
-                </Button>
-              </Form.Item>
-            </React.Fragment>
-          )}
-        </Form.List>
-        <Divider />
-        <Skeleton paragraph={{ rows: 0, width: '100%' }} loading={assetLoading}>
-          <Form.Item label="Temp. Máxima (°C)" name="maxTemp">
-            <InputNumber min={-273} />
-          </Form.Item>
-        </Skeleton>
-        <Skeleton paragraph={{ rows: 0, width: '100%' }} loading={assetLoading}>
-          <Form.Item label="Potência (kWh)" name="power">
-            <InputNumber min={0} />
-          </Form.Item>
-        </Skeleton>
-        <Skeleton paragraph={{ rows: 0, width: '100%' }} loading={assetLoading}>
-          <Form.Item label="RPM" name="rpm">
-            <InputNumber min={0} />
-          </Form.Item>
-        </Skeleton>
-        <Divider />
-        <Skeleton paragraph={{ rows: 0, width: '100%' }} loading={assetLoading}>
-          <Form.Item label="Total de Coletas Uptime" name="totalCollectsUptime">
-            <InputNumber min={0} />
-          </Form.Item>
-        </Skeleton>
-        <Skeleton paragraph={{ rows: 0, width: '100%' }} loading={assetLoading}>
-          <Form.Item label="Total de Horas de Coleta" name="totalUptime">
-            <InputNumber min={0} />
-          </Form.Item>
-        </Skeleton>
-        <Skeleton paragraph={{ rows: 0, width: '100%' }} loading={assetLoading}>
-          <Form.Item label="Data da Última Coleta" name="lastUptimeAt">
-            <DatePicker format="YYYY-MM-DD HH:mm:ss" showTime />
-          </Form.Item>
-        </Skeleton>
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={registrationLoading || updateLoading}
-            disabled={assetLoading || companiesLoading || unitsLoading}
+          </Skeleton>
+          <Skeleton
+            paragraph={{ rows: 0, width: '100%' }}
+            loading={assetLoading}
           >
-            {isEditPage ? 'Editar Ativo' : 'Cadastrar Ativo'}
-          </Button>
-        </Form.Item>
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button type="ghost" onClick={() => history.goBack()}>
-            Voltar
-          </Button>
-        </Form.Item>
-        {isEditPage ? (
-          <Form.Item wrapperCol={{ offset: 20, span: 4 }}>
-            <Button
-              danger
-              onClick={onOpen}
-              style={{ marginLeft: 'auto' }}
-              block
+            <Form.Item
+              label="Empresa"
+              name="companyId"
+              rules={[{ required: true, message: 'A empresa é obrigatória' }]}
             >
-              Deletar
+              <Select
+                loading={companiesLoading}
+                notFoundContent={<Empty />}
+                onChange={(value) => setSelectedCompany(value as number)}
+              >
+                {companiesData?.map((company) => (
+                  <Select.Option key={company.id} value={company.id}>
+                    {company.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Skeleton>
+          <Skeleton
+            paragraph={{ rows: 0, width: '100%' }}
+            loading={assetLoading}
+          >
+            <Form.Item
+              label="Unidade"
+              name="unitId"
+              rules={[{ required: true, message: 'A unidade é obrigatória' }]}
+            >
+              <Select loading={unitsLoading} notFoundContent={<Empty />}>
+                {unitsData?.map((unit) => (
+                  <Select.Option key={unit.id} value={unit.id}>
+                    {unit.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Skeleton>
+          <Skeleton
+            paragraph={{ rows: 0, width: '100%' }}
+            loading={assetLoading}
+          >
+            <Form.Item label="Modelo" name="model">
+              <Input />
+            </Form.Item>
+          </Skeleton>
+          <Skeleton
+            paragraph={{ rows: 0, width: '100%' }}
+            loading={assetLoading}
+          >
+            <Form.Item label="Status" name="status">
+              <Select
+                notFoundContent={<Empty />}
+                onChange={(value) => setSelectedCompany(value as number)}
+              >
+                {statusArray.map((status) => (
+                  <Select.Option key={status.key} value={status.key}>
+                    {status.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Skeleton>
+          <Skeleton
+            paragraph={{ rows: 0, width: '100%' }}
+            loading={assetLoading}
+          >
+            <Form.Item label="Saúde (%)" name="healthscore">
+              <InputNumber max={100} min={0} />
+            </Form.Item>
+          </Skeleton>
+          <Skeleton
+            paragraph={{ rows: 0, width: '100%' }}
+            loading={assetLoading}
+          >
+            <Form.Item label="Imagem">
+              <Form.Item name="image" valuePropName="image" noStyle>
+                <Upload
+                  name="image"
+                  action={API_URL}
+                  beforeUpload={() => false}
+                  accept=".jpg,.jpeg,.png"
+                >
+                  <Button icon={<UploadOutlined />}>Fazer Upload</Button>
+                </Upload>
+              </Form.Item>
+            </Form.Item>
+          </Skeleton>
+          <Divider />
+          <Form.List name="sensors" initialValue={['']}>
+            {(fields, { add, remove }) => (
+              <React.Fragment>
+                {fields.map((field, index) => (
+                  <Form.Item
+                    {...field}
+                    labelCol={{ span: 8 }}
+                    wrapperCol={{ span: 12, offset: index === 0 ? 0 : 8 }}
+                    label={index === 0 ? 'Sensores' : ''}
+                    key={field.key}
+                  >
+                    <Form.Item {...field} noStyle>
+                      <div className="dynamic-input">
+                        <Input />
+                        {fields.length > 1 ? (
+                          <MinusCircleOutlined
+                            className="dynamic-delete-button"
+                            onClick={() => remove(field.name)}
+                          />
+                        ) : null}
+                      </div>
+                    </Form.Item>
+                  </Form.Item>
+                ))}
+                <Form.Item wrapperCol={{ offset: 8 }}>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    icon={<PlusOutlined />}
+                  >
+                    Add field
+                  </Button>
+                </Form.Item>
+              </React.Fragment>
+            )}
+          </Form.List>
+          <Divider />
+          <Skeleton
+            paragraph={{ rows: 0, width: '100%' }}
+            loading={assetLoading}
+          >
+            <Form.Item label="Temp. Máxima (°C)" name="maxTemp">
+              <InputNumber min={-273} />
+            </Form.Item>
+          </Skeleton>
+          <Skeleton
+            paragraph={{ rows: 0, width: '100%' }}
+            loading={assetLoading}
+          >
+            <Form.Item label="Potência (kWh)" name="power">
+              <InputNumber min={0} />
+            </Form.Item>
+          </Skeleton>
+          <Skeleton
+            paragraph={{ rows: 0, width: '100%' }}
+            loading={assetLoading}
+          >
+            <Form.Item label="RPM" name="rpm">
+              <InputNumber min={0} />
+            </Form.Item>
+          </Skeleton>
+          <Divider />
+          <Skeleton
+            paragraph={{ rows: 0, width: '100%' }}
+            loading={assetLoading}
+          >
+            <Form.Item
+              label="Total de Coletas Uptime"
+              name="totalCollectsUptime"
+            >
+              <InputNumber min={0} />
+            </Form.Item>
+          </Skeleton>
+          <Skeleton
+            paragraph={{ rows: 0, width: '100%' }}
+            loading={assetLoading}
+          >
+            <Form.Item label="Total de Horas de Coleta" name="totalUptime">
+              <InputNumber min={0} />
+            </Form.Item>
+          </Skeleton>
+          <Skeleton
+            paragraph={{ rows: 0, width: '100%' }}
+            loading={assetLoading}
+          >
+            <Form.Item label="Data da Última Coleta" name="lastUptimeAt">
+              <DatePicker format="YYYY-MM-DD HH:mm:ss" showTime />
+            </Form.Item>
+          </Skeleton>
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={registrationLoading || updateLoading}
+              disabled={assetLoading || companiesLoading || unitsLoading}
+            >
+              {isEditPage ? 'Editar Ativo' : 'Cadastrar Ativo'}
             </Button>
           </Form.Item>
-        ) : null}
-      </Form>
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Button type="ghost" onClick={() => history.goBack()}>
+              Voltar
+            </Button>
+          </Form.Item>
+          {isEditPage ? (
+            <Form.Item wrapperCol={{ offset: 20, span: 4 }}>
+              <Button
+                danger
+                onClick={onOpen}
+                style={{ marginLeft: 'auto' }}
+                block
+              >
+                Deletar
+              </Button>
+            </Form.Item>
+          ) : null}
+        </Form>
+      )}
     </Layout>
   );
 }

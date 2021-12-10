@@ -1,15 +1,14 @@
 import * as React from 'react';
-import { Button, Result, Skeleton, Tabs, Typography } from 'antd';
+import { useHistory, useParams, Link } from 'react-router-dom';
+import { Skeleton, Spin, Tabs, Typography } from 'antd';
 import Layout from '../../components/layout/Layout';
+import Error from '../../components/error/Error';
 import UnitsTab from '../../components/page-company-view/UnitsTab';
-import useGetData from '../../hooks/useGetData';
-import { useHistory, useParams } from 'react-router';
-import { Link } from 'react-router-dom';
-import { Company } from '../../types/api';
 import UsersTab from '../../components/page-company-view/UsersTab';
 import AssetsTab from '../../components/page-company-view/AssetsTab';
 import CoverTab from '../../components/page-company-view/CoverTab';
-const { Title } = Typography;
+import { Company } from '../../types/api';
+import useGetData from '../../hooks/useGetData';
 
 type PageCompanyRouteParams = {
   companyId: string;
@@ -35,13 +34,19 @@ export default function PageCompanyView() {
     <Layout>
       <Skeleton paragraph={false} loading={loading}>
         <div className="title-container">
-          <Title>
+          <Typography.Title>
             {data?.name} #{data?.id}
-          </Title>
+          </Typography.Title>
           <Link to={`/empresas/${companyId}/editar`}>Editar Empresa</Link>
         </div>
       </Skeleton>
-      {data || loading ? (
+      {loading ? (
+        <div className="spin-container">
+          <Spin size="large" />
+        </div>
+      ) : error ? (
+        <Error refetch={refetch} />
+      ) : data ? (
         <Tabs
           onChange={handleTabChange}
           defaultActiveKey="assets"
@@ -60,17 +65,6 @@ export default function PageCompanyView() {
             <AssetsTab companyId={companyId} />
           </Tabs.TabPane>
         </Tabs>
-      ) : error ? (
-        <Result
-          status="500"
-          title="Oops!Ago errado aconteceu."
-          subTitle="Não conseguimos buscar os dados que foram solicitados."
-          extra={
-            <Button type="primary" onClick={() => refetch()}>
-              Tentar Novamente
-            </Button>
-          }
-        />
       ) : null}
     </Layout>
   );

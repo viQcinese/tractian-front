@@ -2,7 +2,7 @@ export type Asset = {
   id: number;
   sensors: string[];
   model: string;
-  status: 'inAlert' | 'inDownTime' | 'inOperation';
+  status: 'inAlert' | 'inDowntime' | 'inOperation';
   healthscore: number;
   name: string;
   image: string;
